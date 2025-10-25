@@ -6,6 +6,7 @@ EXPORTS
 	XMemFree                            = XMemFree_X                                        @507
 	XMemFreeDefault                     = XMemFreeDefault_X                                 @508
 	XMemSetAllocationHooks		    = XMemSetAllocationHooks_X				@514
+	XMemSetAllocationHysteresis   = XMemSetAllocationHysteresis_X		@515
 	GetConsoleType                      = GetConsoleType_X                                  @140
 	AcquireSRWLockExclusive             = Kernel32.AcquireSRWLockExclusive                  @1
 	AcquireSRWLockShared                = Kernel32.AcquireSRWLockShared                     @2

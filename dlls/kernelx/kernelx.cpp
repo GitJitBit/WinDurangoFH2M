@@ -254,7 +254,60 @@ PVOID XMemAllocDefault_X(SIZE_T dwSize, uint64_t flags) {
 
     return ptr;
 }
+#define MAX_HEAPS 16
 
+static CRITICAL_SECTION g_HeapLocks[MAX_HEAPS];
+static LPVOID g_Heaps[MAX_HEAPS]; // Base addresses
+static DWORD g_HeapFreePages[MAX_HEAPS];
+static DWORD g_HeapTargetPages[MAX_HEAPS];
+static DWORD g_HeapHysteresisPages[MAX_HEAPS];
+
+HRESULT __stdcall XMemSetAllocationHysteresis_X(int heapId, int applyFlag, __int64 hysteresisBytes)
+{
+    if ((heapId & 0xFFFFFFF0) != 0)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return E_FAIL;
+    }
+
+    if (applyFlag)
+        heapId |= 0x10;
+
+    int slot = heapId & 0xF;
+
+    // Initialize heap lazily
+    if (!g_Heaps[slot])
+    {
+        g_Heaps[slot] = VirtualAlloc(NULL, 64 * 1024 * 1024, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE); // 64MB heap
+        if (!g_Heaps[slot])
+            return E_FAIL;
+
+        InitializeCriticalSection(&g_HeapLocks[slot]);
+        g_HeapFreePages[slot] = 16; // 16 pages initially free
+        g_HeapTargetPages[slot] = 16;
+    }
+
+    EnterCriticalSection(&g_HeapLocks[slot]);
+
+    DWORD targetPages = (DWORD)((hysteresisBytes + 0x3FFFFF) >> 22); // Each page = 4MB
+    g_HeapHysteresisPages[slot] = targetPages;
+
+    while (g_HeapTargetPages[slot] > targetPages)
+    {
+        LPVOID addr = (LPBYTE)g_Heaps[slot] + ((g_HeapTargetPages[slot] - 1) * 4 * 1024 * 1024); // Page offset
+        if (!VirtualFree(addr, 4 * 1024 * 1024, MEM_DECOMMIT))
+        {
+            LeaveCriticalSection(&g_HeapLocks[slot]);
+            return HRESULT_FROM_WIN32(GetLastError());
+        }
+
+        g_HeapTargetPages[slot]--;
+    }
+
+    LeaveCriticalSection(&g_HeapLocks[slot]);
+    SetLastError(0);
+    return S_OK;
+}
 BOOLEAN __stdcall XMemFreeDefault_X(PVOID pAddress, uint64_t dwAllocAttributes) {
     
     free(pAddress);
@@ -379,6 +432,84 @@ LPVOID VirtualAlloc_X(
 {
     return VirtualAllocEx_X(GetCurrentProcess(), lpAddress, dwSize, flAllocationType, flProtect);
 }
+#define PROTECT_FLAGS_MASK (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY | PAGE_NOACCESS | PAGE_READONLY | PAGE_READWRITE | PAGE_WRITECOPY | PAGE_GUARD | PAGE_NOCACHE)
+#define ALLOCATION_FLAGS_MASK (MEM_COMMIT | MEM_RESERVE | MEM_RESET | MEM_LARGE_PAGES | MEM_PHYSICAL | MEM_TOP_DOWN | MEM_WRITE_WATCH)
+
+#define PROTECT_FLAGS_MASK 0xFF
+#define ALLOCATION_FLAGS_MASK 0xFFFFF
+
+bool EnableDebugPrivilege() {
+    HANDLE hToken;
+    TOKEN_PRIVILEGES tp;
+    LUID luid;
+
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
+        return false;
+    if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid))
+        return false;
+
+    tp.PrivilegeCount = 1;
+    tp.Privileges[0].Luid = luid;
+    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+    if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL)) {
+        CloseHandle(hToken);
+        return false;
+    }
+
+    CloseHandle(hToken);
+    return GetLastError() == ERROR_SUCCESS;
+}
+
+LPVOID VirtualAllocEx_X(HANDLE hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect)
+{
+    flProtect &= PROTECT_FLAGS_MASK;
+    flAllocationType &= ALLOCATION_FLAGS_MASK;
+
+    DEBUGPRINT("VirtualAllocEx_X: %p, %zu, %x, %x\n", lpAddress, dwSize, flAllocationType, flProtect);
+
+    LPVOID ret = VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+    if (!ret) {
+        DWORD err = GetLastError();
+        DEBUGPRINT("VirtualAllocEx failed with error %lu\n", err);
+
+        if (err == ERROR_PRIVILEGE_NOT_HELD) {
+            DEBUGPRINT("VirtualAllocEx failed due to missing privileges (SeDebugPrivilege).\n");
+        }
+
+        // Fallback only if allocating into self
+        if (hProcess == GetCurrentProcess() || hProcess == NULL) {
+            DEBUGPRINT("Attempting fallback with VirtualAlloc...\n");
+
+            if ((flAllocationType & (MEM_RESERVE | MEM_COMMIT)) != 0) {
+                ret = VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect);
+                if (!ret) {
+                    DWORD fallbackErr = GetLastError();
+                    DEBUGPRINT("VirtualAlloc fallback also failed: %lu\n", fallbackErr);
+                }
+            }
+        }
+    }
+
+    // Final safety: log if still null
+    if (!ret) {
+        DEBUGPRINT("VirtualAllocEx_X ultimately failed to allocate %zu bytes.\n", dwSize);
+    }
+
+    return ret;
+}
+
+
+LPVOID VirtualAlloc_X(
+    LPVOID lpAddress,
+    SIZE_T dwSize,
+    DWORD  flAllocationType,
+    DWORD  flProtect
+)
+{
+    return VirtualAllocEx_X(GetCurrentProcess(), lpAddress, dwSize, flAllocationType, flProtect);
+}
+
 BOOL ToolingMemoryStatus_X(LPTOOLINGMEMORYSTATUS buffer)
 {
     __int64 SystemInformation[4];
@@ -415,7 +546,7 @@ BOOL TitleMemoryStatus_X(LPTITLEMEMORYSTATUS Buffer)
     }
 
     NTSTATUS Status = NtQueryInformationProcess(
-        (HANDLE)0xFFFFFFFFFFFFFFFFi64,
+        GetCurrentProcess(),
         (PROCESSINFOCLASS)(0x3A | 0x3A),
         ProcessInformation,
         0x48u,
