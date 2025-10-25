@@ -16,15 +16,28 @@ HRESULT __stdcall FrameworkViewWrapper::SetWindow(ABI::Windows::UI::Core::ICoreW
 	return m_realView->SetWindow(window);
 }
 
+
 HRESULT __stdcall FrameworkViewWrapper::Load(HSTRING entryPoint)
 {
 	return m_realView->Load(entryPoint);
 }
 
-HRESULT __stdcall FrameworkViewWrapper::Run(void)
-{
-	return m_realView->Run();
+#include <winrt/Windows.Foundation.h> // Include necessary namespace for Platform::COMException  
+
+HRESULT __stdcall FrameworkViewWrapper::Run()  
+{  
+   try  
+   {  
+       wprintf(L"Entering Run()\n");  
+       return m_realView->Run();  
+   }  
+   catch (winrt::hresult_error const& ex) // Replace Platform::COMException with winrt::hresult_error  
+   {  
+       wprintf(L"COMException caught in Run: HRESULT=0x%08X\n", ex.code());  
+       throw; // Re-throw for debugger, or return E_FAIL  
+   }  
 }
+
 
 HRESULT __stdcall FrameworkViewWrapper::Uninitialize(void)
 {
@@ -33,7 +46,13 @@ HRESULT __stdcall FrameworkViewWrapper::Uninitialize(void)
 
 HRESULT FrameworkViewWrapper::QueryInterface(const IID& riid, void** ppvObject)
 {
+	LPOLESTR str = nullptr;
+	StringFromIID(riid, &str);
+	wprintf(L"FrameworkViewWrapper [QI] IID Requested: %s\n", str);
+	CoTaskMemFree(str);
+
 	if (riid == __uuidof(IFrameworkView) ||
+		riid == __uuidof(ICoreApplicationExit) ||
 		riid == __uuidof(IUnknown) ||
 		riid == __uuidof(IInspectable))
 	{

@@ -131,7 +131,7 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</MultiProcessorCompilation>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
@@ -153,6 +153,7 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -163,14 +164,6 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="ConnectedStorage\ConnectedStorage.h" />
-    <ClInclude Include="imgui\backends\imgui_impl_dx11.h" />
-    <ClInclude Include="imgui\backends\imgui_impl_win32.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Implementation\Microsoft.Xbox.GameChat.AccessibilitySettingsChangedEventArgs.h" />
     <ClInclude Include="Implementation\Microsoft.Xbox.GameChat.ChannelUpdatedEventArgs.h" />
     <ClInclude Include="Implementation\Microsoft.Xbox.GameChat.ChatManager.h" />
@@ -468,6 +461,23 @@
     <ClInclude Include="Implementation\Windows.Xbox.Media.GameTransportControlsPropertyChangedEventArgs.h" />
     <ClInclude Include="Implementation\Windows.Xbox.Media.SmoothStreamingSessionManager.h" />
     <ClInclude Include="Implementation\Windows.Xbox.Media.SystemMediaTransportControls.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayer.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayerDeviceGroup.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayersChangedEventArgs.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GameSessionReadyEventArgs.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.MatchStatusChangedEventArgs.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.MultiplayerSessionReference.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.Party.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChat.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChatMember.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChatView.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyConfig.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyMember.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyMemberDeviceGroup.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyRosterChangedEventArgs.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyStateChangedEventArgs.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyView.h" />
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.UserPartyAssociation.h" />
     <ClInclude Include="Implementation\Windows.Xbox.Networking.Development.h" />
     <ClInclude Include="Implementation\Windows.Xbox.Networking.ErrorMessages.h" />
     <ClInclude Include="Implementation\Windows.Xbox.Networking.MeasureQualityOfServiceResult.h" />
@@ -544,34 +554,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConnectedStorage\ConnectedStorage.cpp" />
-    <ClCompile Include="imgui\backends\imgui_impl_dx11.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Implementation\Microsoft.Xbox.GameChat.AccessibilitySettingsChangedEventArgs.cpp" />
     <ClCompile Include="Implementation\Microsoft.Xbox.GameChat.ChannelUpdatedEventArgs.cpp" />
     <ClCompile Include="Implementation\Microsoft.Xbox.GameChat.ChatManager.cpp" />
@@ -869,6 +851,23 @@
     <ClCompile Include="Implementation\Windows.Xbox.Media.GameTransportControlsPropertyChangedEventArgs.cpp" />
     <ClCompile Include="Implementation\Windows.Xbox.Media.SmoothStreamingSessionManager.cpp" />
     <ClCompile Include="Implementation\Windows.Xbox.Media.SystemMediaTransportControls.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayer.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayerDeviceGroup.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayersChangedEventArgs.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GameSessionReadyEventArgs.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.MatchStatusChangedEventArgs.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.MultiplayerSessionReference.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.Party.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChat.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChatMember.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChatView.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyConfig.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyMember.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyMemberDeviceGroup.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyRosterChangedEventArgs.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyStateChangedEventArgs.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyView.cpp" />
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.UserPartyAssociation.cpp" />
     <ClCompile Include="Implementation\Windows.Xbox.Networking.Development.cpp" />
     <ClCompile Include="Implementation\Windows.Xbox.Networking.ErrorMessages.cpp" />
     <ClCompile Include="Implementation\Windows.Xbox.Networking.MeasureQualityOfServiceResult.cpp" />
@@ -949,7 +948,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="imgui\misc\debuggers\imgui.natstepfilter" />
     <None Include="packages.config" />
     <None Include="winrt_x.def" />
   </ItemGroup>
@@ -991,6 +989,7 @@
     <Midl Include="External\Windows.Xbox.Management.idl" />
     <Midl Include="External\Windows.Xbox.Media.GameTransportControls.idl" />
     <Midl Include="External\Windows.Xbox.Media.idl" />
+    <Midl Include="External\Windows.Xbox.Multiplayer.idl" />
     <Midl Include="External\Windows.Xbox.Networking.idl" />
     <Midl Include="External\Windows.Xbox.Services.idl" />
     <Midl Include="External\Windows.Xbox.Shell.idl" />
@@ -1001,9 +1000,6 @@
     <Midl Include="External\Windows.Xbox.System.idl" />
     <Midl Include="External\Windows.Xbox.Achievements.idl" />
     <Midl Include="External\Windows.Xbox.UI.idl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="imgui\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

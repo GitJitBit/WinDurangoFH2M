@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CoreWindowWrapperX.h"
+using namespace ABI::Windows::ApplicationModel::Core;
 
 HRESULT CoreWindowWrapperX::GetIids(ULONG* iidCount, IID** iids)
 {
@@ -244,6 +245,7 @@ HRESULT CoreWindowWrapperX::QueryInterface(const IID& riid, void** ppvObject)
 {
 	printf("[CoreWindowWrapperX] --> QueryInterface\n");
 	if (riid == __uuidof(IUnknown) || 
+		riid == __uuidof(ICoreApplicationExit) ||
 		riid == __uuidof(IInspectable) || 
 		riid == __uuidof(ICoreWindow) || 
 		riid == __uuidof(IAgileObject))
@@ -255,8 +257,8 @@ HRESULT CoreWindowWrapperX::QueryInterface(const IID& riid, void** ppvObject)
 	
 	*ppvObject = nullptr;
 
-	return E_NOINTERFACE;
-	//return m_realWindow->QueryInterface(riid, ppvObject);
+	//return E_NOINTERFACE;
+	return m_realWindow->QueryInterface(riid, ppvObject);
 }
 
 ULONG CoreWindowWrapperX::AddRef()

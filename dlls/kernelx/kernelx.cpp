@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "../common/common.h"
-#include "../common/debug.h"
 
 uint32_t dword_180021AA0[16];
 uint32_t dword_180021A60[16];
@@ -83,7 +82,6 @@ BOOL __stdcall WaitOnAddress_X(volatile void* Address, PVOID CompareAddress, SIZ
 BOOL JobTitleMemoryStatus_X(void* pJob, LPTITLEMEMORYSTATUS Buffer) {
     __int64 jobInfo[7]; // Buffer to store job object memory information
     NTSTATUS status;
-    DEBUG_PRINT();
     // Validate input parameters
     if (!pJob || !Buffer || Buffer->dwLength != sizeof(TITLEMEMORYSTATUS)) {
         SetLastError(ERROR_INVALID_PARAMETER);
@@ -230,7 +228,7 @@ void GetSystemOSVersion_X(LPSYSTEMOSVERSIONINFO VersionInformation) {
     int edx = cpuInfo[3];
 
     VersionInformation->MajorVersion = LOBYTE(ebx);             // Lowest 8 bits of EBX
-    VersionInformation->MinorVersion = HIBYTE(HIDWORD(eax));    // Highest 8 bits of EAX
+    VersionInformation->MinorVersion = HIBYTE(HIWORD(eax));     // Highest 8 bits of EAX
 
     VersionInformation->Revision = LOWORD(edx);                 // Lowest 16 bits of EDX
     VersionInformation->BuildNumber = LOWORD(eax);              // Lowest 16 bits of EAX     
@@ -391,6 +389,83 @@ LPVOID VirtualAllocEx_X(HANDLE hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD 
     flProtect &= PROTECT_FLAGS_MASK;
     flAllocationType &= ALLOCATION_FLAGS_MASK;
 
+    printf("VirtualAllocEx_X: %p, %zu, %x, %x\n", lpAddress, dwSize, flAllocationType, flProtect);
+
+    LPVOID ret = VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+    if (!ret) {
+        DWORD err = GetLastError();
+        printf("VirtualAllocEx failed with error %lu\n", err);
+
+        if (err == ERROR_PRIVILEGE_NOT_HELD) {
+            printf("VirtualAllocEx failed due to missing privileges (SeDebugPrivilege).\n");
+        }
+
+        // Fallback only if allocating into self
+        if (hProcess == GetCurrentProcess() || hProcess == NULL) {
+            printf("Attempting fallback with VirtualAlloc...\n");
+
+            if ((flAllocationType & (MEM_RESERVE | MEM_COMMIT)) != 0) {
+                ret = VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect);
+                if (!ret) {
+                    DWORD fallbackErr = GetLastError();
+                    printf("VirtualAlloc fallback also failed: %lu\n", fallbackErr);
+                }
+            }
+        }
+    }
+
+    // Final safety: log if still null
+    if (!ret) {
+        printf("VirtualAllocEx_X ultimately failed to allocate %zu bytes.\n", dwSize);
+    }
+
+    return ret;
+}
+
+
+LPVOID VirtualAlloc_X(
+    LPVOID lpAddress,
+    SIZE_T dwSize,
+    DWORD  flAllocationType,
+    DWORD  flProtect
+)
+{
+    return VirtualAllocEx_X(GetCurrentProcess(), lpAddress, dwSize, flAllocationType, flProtect);
+}
+#define PROTECT_FLAGS_MASK (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY | PAGE_NOACCESS | PAGE_READONLY | PAGE_READWRITE | PAGE_WRITECOPY | PAGE_GUARD | PAGE_NOCACHE)
+#define ALLOCATION_FLAGS_MASK (MEM_COMMIT | MEM_RESERVE | MEM_RESET | MEM_LARGE_PAGES | MEM_PHYSICAL | MEM_TOP_DOWN | MEM_WRITE_WATCH)
+
+#define PROTECT_FLAGS_MASK 0xFF
+#define ALLOCATION_FLAGS_MASK 0xFFFFF
+
+bool EnableDebugPrivilege() {
+    HANDLE hToken;
+    TOKEN_PRIVILEGES tp;
+    LUID luid;
+
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
+        return false;
+    if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid))
+        return false;
+
+    tp.PrivilegeCount = 1;
+    tp.Privileges[0].Luid = luid;
+    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+    if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL)) {
+        CloseHandle(hToken);
+        return false;
+    }
+
+    CloseHandle(hToken);
+    return GetLastError() == ERROR_SUCCESS;
+}
+
+LPVOID VirtualAllocEx_X(HANDLE hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect)
+{
+    flProtect &= PROTECT_FLAGS_MASK;
+    flAllocationType &= ALLOCATION_FLAGS_MASK;
+
     DEBUGPRINT("VirtualAllocEx_X: %p, %zu, %x, %x\n", lpAddress, dwSize, flAllocationType, flProtect);
 
     LPVOID ret = VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
@@ -437,7 +512,6 @@ LPVOID VirtualAlloc_X(
 
 BOOL ToolingMemoryStatus_X(LPTOOLINGMEMORYSTATUS buffer)
 {
-    DEBUG_PRINT();
     __int64 SystemInformation[4];
 
     if (buffer->dwLength != 40)

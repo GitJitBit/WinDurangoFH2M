@@ -1,3 +1,21 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
 #ifndef EVENT_TRACKING_LOG_H
 #define EVENT_TRACKING_LOG_H
 
@@ -6,16 +24,12 @@
 #include <wmistr.h>    // For WMI and ETW structures
 #include "evntprov.h"  // Ensure this file is available
 
-
-
-#ifndef WINAPI
-#define WINAPI __stdcall
-#endif
 #define _DWORD DWORD   // Define _DWORD as DWORD (32-bit unsigned int)
 #define _QWORD UINT64  // Define _QWORD as UINT64 (64-bit unsigned int)
 #define BUFFER_SIZE 64  // Define a reasonable buffer size
 
 #define DEFAULT_SAMPLE_PERCENTAGE 10
+
 
 typedef enum _EventSampleRate {
     EventSample_UseProviderSample = -2,
@@ -116,31 +130,22 @@ typedef enum _UserIdType {
     UserIdType_Anonymous
 } UserIdType;
 
-VOID WINAPI
-FillEventCommonFields(
-    __out_ecount(1) EVENT_DATA_DESCRIPTOR* eventDataDescriptors,
-    __out_ecount(bufferSize) UINT8* buffer,
-    __in UINT32 bufferSize
-);
+VOID __stdcall EtxFillCommonFields_v7_X(EVENT_DATA_DESCRIPTOR* eventDataDescriptors,
+    UINT8* buffer, UINT32 bufferSize);
 
-ULONG WINAPI
-RegisterEventProvider(__inout EVENT_PROVIDER_DESCRIPTOR* provider, __inout REGHANDLE* handle);
+ULONG __stdcall EtxRegister_X(EVENT_PROVIDER_DESCRIPTOR* provider, REGHANDLE* handle);
 
-ULONG WINAPI
-UnregisterEventProvider(__inout EVENT_PROVIDER_DESCRIPTOR* provider, __inout REGHANDLE* handle);
+ULONG __stdcall EtxUnregister_X(EVENT_PROVIDER_DESCRIPTOR* provider, REGHANDLE* handle);
 
-ULONG WINAPI
-WriteEventLog(
-    __in const EVENT_DESCRIPTOR_STRUCT* eventDescriptor,
-    __in const EVENT_PROVIDER_DESCRIPTOR* providerDescriptor,
-    __in REGHANDLE handle,
-    __in ULONG dataCount,
-    __in const EVENT_DATA_DESCRIPTOR* eventData
-);
-void WINAPI
-PauseEventLogging( );
+ULONG __stdcall EtxEventWrite_X(
+    const EVENT_DESCRIPTOR_STRUCT* eventDescriptor,
+    const EVENT_PROVIDER_DESCRIPTOR* /*providerDescriptor*/,
+    REGHANDLE                        handle,
+    ULONG                            dataCount,
+    const EVENT_DATA_DESCRIPTOR* eventData);
 
-void WINAPI
-ResumeEventLogging( );
+void __stdcall EtxSuspendUploading_X( );
+
+void __stdcall EtxResumeUploading_X( );
 #pragma warning(pop)
 #endif // EtwPlus_H

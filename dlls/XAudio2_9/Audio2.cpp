@@ -1,7 +1,26 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
 #include "pch.h"
 #include <xaudio2.h>
 #include <wrl.h>
 #include <stdio.h>
+#include "../common/Logger.h"
 
 #define WAVE_FORMAT_XMA2 0x166
 
@@ -258,26 +277,26 @@ HRESULT STDAPICALLTYPE CreateXAudio2Object(
 
 HRESULT STDAPICALLTYPE CreateAudioReverb_X()
 {
-    printf("[XAudio]: CreateAudioReverb_X IS STUBBED\n");
+    LOG_WARNING("[XAudio]: CreateAudioReverb_X IS STUBBED\n");
     return S_OK;
 }
 HRESULT STDAPICALLTYPE CreateAudioVolumeMeter_X()
 {
-    printf("[XAudio]: CreateAudioVolumeMeter_X IS STUBBED\n");
+    LOG_WARNING("[XAudio]: CreateAudioVolumeMeter_X IS STUBBED\n");
     return S_OK;
 }
 HRESULT STDAPICALLTYPE CreateFX_X()
 {
-    printf("[XAudio]: CreateFX_X IS STUBBED\n");
+    LOG_WARNING("[XAudio]: CreateFX_X IS STUBBED\n");
     return S_OK;
 }
 HRESULT STDAPICALLTYPE X3DAudioCalculate_X()
 {
-    printf("[XAudio]: X3DAudioCalculate_X IS STUBBED\n");
+    LOG_WARNING("[XAudio]: X3DAudioCalculate_X IS STUBBED\n");
     return S_OK;
 }
 HRESULT STDAPICALLTYPE X3DAudioInitialize_X()
 {
-    printf("[XAudio]: X3DAudioInitialize_X IS STUBBED\n");
+    LOG_WARNING("[XAudio]: X3DAudioInitialize_X IS STUBBED\n");
     return S_OK;
 }

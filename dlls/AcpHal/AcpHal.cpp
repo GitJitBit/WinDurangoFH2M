@@ -5,10 +5,10 @@
 #include <basetyps.h>
 #include <cstdio>
 #include <stdlib.h>
-#include "../common/debug.h"
 #include "contexts.h"
 #include <intsafe.h>
 #include <new>
+#include "../common/DebugLogger.h"
 
 static APU_HEAP g_ApuHeap = { 0 };
 HRESULT AcpHalAllocateShapeContexts_X(SHAPE_CONTEXTS* ctx) {
@@ -41,7 +41,7 @@ HRESULT AcpHalAllocateShapeContexts_X(SHAPE_CONTEXTS* ctx) {
 
 
 HRESULT AcpHalReleaseShapeContexts_X( ) {
-    DEBUG_PRINT( );
+    DEBUG_LOG( );
 
     // Free any previously allocated context arrays
     if (g_ApuHeap.NonCached) {
@@ -136,7 +136,7 @@ HRESULT __stdcall ApuCreateHeap_X(UINT32 cachedSizeInBytes, UINT32 nonCachedSize
 
 HRESULT __stdcall ApuHeapGetState_X(ApuHeapState* apuHeapState, UINT32 flags)
 {
-    DEBUG_PRINT( );
+    DEBUG_LOG( );
 
     if (!apuHeapState)
         return E_POINTER;
@@ -155,7 +155,7 @@ bool ApuIsVirtualAddressValid_X(
          UINT32 physicalAlignmentInBytes
 )
 {
-    DEBUG_PRINT( );
+    DEBUG_LOG( );
 
     if (!virtualAddress || physicalAlignmentInBytes == 0)
         return false;
@@ -176,7 +176,7 @@ HRESULT ApuFree_X(void* virtualAddress)
 }
 
 APU_ADDRESS __stdcall ApuMapVirtualAddress_X(const void* virtualAddress) {
-    DEBUG_PRINT( );
+    DEBUG_LOG( );
     return reinterpret_cast<APU_ADDRESS>(virtualAddress);
 }
 
@@ -184,6 +184,6 @@ void* ApuMapApuAddress_X(
          APU_ADDRESS apuPhysicalAddress
 )
 {
-    DEBUG_PRINT( );
+    DEBUG_LOG( );
     return reinterpret_cast<void*>(apuPhysicalAddress);
 }

@@ -5,10 +5,8 @@
 class MMDeviceEnumeratorWrapper : IMMDeviceEnumerator
 {
 public:
-    MMDeviceEnumeratorWrapper(IMMDeviceEnumerator* realEnumerator) : m_realEnumerator(realEnumerator)
-    {
-
-    }
+    MMDeviceEnumeratorWrapper(IMMDeviceEnumerator* realEnumerator);
+    
     HRESULT STDMETHODCALLTYPE QueryInterface(
         /* [in] */ REFIID riid,
         /* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR* __RPC_FAR* ppvObject) override;
@@ -48,5 +46,7 @@ public:
         /* [annotation][in] */
         _In_  IMMNotificationClient* pClient) override;
 
-    IMMDeviceEnumerator* m_realEnumerator;
+    private:
+        LONG m_refCount = 1;
+        IMMDeviceEnumerator* m_realEnumerator;
 };

@@ -2,4 +2,4 @@
 #define RtlSetLastWin32ErrorAndNtStatusFromNtStatus(Status) \
     SetLastError(RtlNtStatusToDosError(Status))
 #define RtlGetLastWin32ErrorAndNtStatusFromNtStatus(Status) \
-    GetLastError(RtlNtStatusToDosError(Status))
+    (SetLastError(RtlNtStatusToDosError(Status)), GetLastError())

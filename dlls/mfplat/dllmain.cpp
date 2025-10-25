@@ -1,3 +1,22 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
+
 #include <Windows.h>
 #include <mfapi.h>
 // note from unixian: this proxy dll situation is temporary, but we need to use the actual functions from mfplat.dll while we're also named mfplat
@@ -266,7 +285,19 @@ extern "C" {
 	void fMFPutWorkItemEx() { PA = mfplat.oMFPutWorkItemEx; runASM(); }
 	void fMFPutWorkItemEx2() { PA = mfplat.oMFPutWorkItemEx2; runASM(); }
 	void fMFRemovePeriodicCallback() { PA = mfplat.oMFRemovePeriodicCallback; runASM(); }
-	void fMFResetDXGIDeviceManagerX() { PA = mfplat.oMFResetDXGIDeviceManagerX; runASM(); }
+
+	HRESULT __stdcall MFResetDXGIDeviceManager_X(IMFDXGIDeviceManager* pDeviceManager, IUnknown* pD3DDevice, UINT resetToken)
+	{
+		if (!pDeviceManager || !pD3DDevice)
+			return E_INVALIDARG;
+
+		HRESULT hr = pDeviceManager->ResetDevice(pD3DDevice, resetToken);
+		if (hr == E_NOINTERFACE)
+			hr = E_INVALIDARG;
+
+		return hr;
+	}
+
 	void fMFScheduleWorkItem() { PA = mfplat.oMFScheduleWorkItem; runASM(); }
 	void fMFScheduleWorkItemEx() { PA = mfplat.oMFScheduleWorkItemEx; runASM(); }
 	void fMFSerializeAttributesToStream() { PA = mfplat.oMFSerializeAttributesToStream; runASM(); }

@@ -1,6 +1,31 @@
 #include "pch.h"
 #include "CoreApplicationWrapperX.h"
 #include "FrameworkViewSourceWrapper.h"
+using namespace ABI::Windows::ApplicationModel::Core;
+
+HRESULT CoreApplicationWrapperX::Exit()
+{
+	printf("[CoreApplicationWrapperX] ICoreApplicationExit::Exit() called — forwarding to realExit.\n");
+
+	if (realExit) {
+		return realExit->Exit();
+	}
+
+	printf("[CoreApplicationWrapperX] WARNING: realExit is null!\n");
+	return E_FAIL;
+}
+
+HRESULT CoreApplicationWrapperX::add_Exiting(__FIEventHandler_1_IInspectable* handler, EventRegistrationToken* token)
+{
+	printf("[CoreApplicationWrapperX] add_Exiting called\n");
+	return realExit ? realExit->add_Exiting(handler, token) : E_FAIL;
+}
+
+HRESULT CoreApplicationWrapperX::remove_Exiting(EventRegistrationToken token)
+{
+	printf("[CoreApplicationWrapperX] remove_Exiting called\n");
+	return realExit ? realExit->remove_Exiting(token) : E_FAIL;
+}
 
 HRESULT CoreApplicationWrapperX::GetIids(ULONG* iidCount, IID** iids)
 {
@@ -110,6 +135,11 @@ INT32 CoreApplicationWrapperX::_abi_get_Properties(ABI::Windows::Foundation::Col
 
 HRESULT CoreApplicationWrapperX::QueryInterface(const IID& riid, void** ppvObject)
 {
+	LPOLESTR str = nullptr;
+	StringFromIID(riid, &str);
+	wprintf(L"CoreApplicationWrapperX [QI] IID Requested: %s\n", str);
+	CoTaskMemFree(str);
+
 	if (riid == __uuidof(IActivationFactory) || riid == __uuidof(IUnknown))
 	{
 		*ppvObject = static_cast<IActivationFactory*>(this);
@@ -123,7 +153,12 @@ HRESULT CoreApplicationWrapperX::QueryInterface(const IID& riid, void** ppvObjec
 		AddRef();
 		return S_OK;
 	}
-
+	if (riid == __uuidof(ICoreApplicationExit))
+	{
+		*ppvObject = this;
+		AddRef();
+		return S_OK;
+	}
 	if (riid == __uuidof(ICoreApplicationResourceAvailabilityX)) // allow ICoreApplicationResourceAvailabilityX interface
 	{
 		*ppvObject = static_cast<ICoreApplicationResourceAvailabilityX*>(this);
@@ -134,6 +169,13 @@ HRESULT CoreApplicationWrapperX::QueryInterface(const IID& riid, void** ppvObjec
 	if (riid == __uuidof(ICoreApplicationGpuPolicy)) // allow ICoreApplicationResourceAvailabilityX interface
 	{
 		*ppvObject = static_cast<ICoreApplicationGpuPolicy*>(this);
+		AddRef();
+		return S_OK;
+	}
+
+	if (riid == __uuidof(ICoreApplicationExit)) {
+		printf("ICoreApplicationExit CALLED - GAME OVER BRO\n");
+		*ppvObject = this;
 		AddRef();
 		return S_OK;
 	}

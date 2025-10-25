@@ -25,6 +25,13 @@
     <ClCompile Include="MMDeviceEnumeratorWrapper.cpp">
       <Filter>MMDeviceEnumerator</Filter>
     </ClCompile>
+    <ClCompile Include="MMDeviceWrapper.cpp">
+      <Filter>MMDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="MMDeviceCollectionWrapper.cpp">
+      <Filter>MMDeviceEnumerator\MMDeviceCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkInformationWrapperX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
@@ -65,6 +72,13 @@
     <ClInclude Include="MMDeviceEnumeratorWrapper.h">
       <Filter>MMDeviceEnumerator</Filter>
     </ClInclude>
+    <ClInclude Include="MMDeviceWrapper.h">
+      <Filter>MMDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="MMDeviceCollectionWrapper.h">
+      <Filter>MMDeviceEnumerator\MMDeviceCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkInformationWrapperX.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
@@ -101,6 +115,12 @@
     </Filter>
     <Filter Include="MMDeviceEnumerator\Xbox">
       <UniqueIdentifier>{58f8ec7f-d4c1-43e8-a2a9-81a75350ae82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MMDevice">
+      <UniqueIdentifier>{b5806f6f-3fc6-4043-b6a0-8c59222992fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MMDeviceEnumerator\MMDeviceCollection">
+      <UniqueIdentifier>{8e5db7be-5063-4c0f-86f8-0d165dbf6b47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

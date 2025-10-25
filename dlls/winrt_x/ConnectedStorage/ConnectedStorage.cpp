@@ -12,7 +12,7 @@
 
 winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::CreateContainer(winrt::hstring name) const
 {
-   // printf("[ConnectedStorage] Container %S requested creation\n", name.c_str());
+   // LOG_WARNING("[ConnectedStorage] Container %S requested creation\n", name.c_str());
 
     if (!co_await DoesFolderExist(m_storagePath + L"\\" + name))
     {
@@ -20,7 +20,7 @@ winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Cre
         co_await folder.CreateFolderAsync(name);
     }
 
-	//printf("[ConnectedStorage] Container %S created\n", name.c_str());
+	//LOG_WARNING("[ConnectedStorage] Container %S created\n", name.c_str());
 }
 
 winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Read(
@@ -28,7 +28,7 @@ winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Rea
 {
     if (!co_await DoesFolderExist(m_storagePath + L"\\" + containerName)) {
         co_await CreateContainer(containerName);
-        printf("[ConnectedStorage] Container %S created\n", containerName.c_str( ));
+        LOG_INFO("[ConnectedStorage] Container %S created\n", containerName.c_str( ));
     }
 
     auto folder = co_await winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(m_storagePath + L"\\" + containerName);
@@ -36,7 +36,7 @@ winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Rea
     for (auto const& pair : data)
     {
         auto fileName = pair.Key();
-        //printf("FileName -> %ls | folder -> %ls\n", fileName.c_str(), folder.Path().c_str());
+        //LOG_INFO("FileName -> %ls | folder -> %ls\n", fileName.c_str(), folder.Path().c_str());
         auto file = co_await folder.GetFileAsync(fileName);
         auto fileBuffer = co_await winrt::Windows::Storage::FileIO::ReadBufferAsync(file);
         auto bufferByteAccess = fileBuffer.as<Windows::Storage::Streams::IBufferByteAccess>();
@@ -58,7 +58,7 @@ winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Upl
 {
     if (!co_await DoesFolderExist(m_storagePath + L"\\" + containerName)) {
         co_await CreateContainer(containerName);
-        printf("[ConnectedStorage] Container %S created\n", containerName.c_str( ));
+        LOG_INFO("[ConnectedStorage] Container %S created\n", containerName.c_str( ));
     }
 
 	// if a displayName is provided, inside the folder create a txt called wd_displayname.txt with the displayName
@@ -193,7 +193,7 @@ winrt::Windows::Foundation::IAsyncOperation<bool> WinDurango::impl::ConnectedSto
         else
         {
             // Log unexpected errors for debugging
-            printf("Unexpected error while checking file existence: %ls\n", ex.message( ).c_str( ));
+            LOG_ERROR("Unexpected error while checking file existence: %ls\n", ex.message( ).c_str( ));
             throw; // Re-throw unexpected exceptions
         }
     }
@@ -230,5 +230,5 @@ winrt::Windows::Foundation::IAsyncAction WinDurango::impl::ConnectedStorage::Ini
 {
 	co_await CreateDirectories(name, m_storagePath);
 
-    printf("[ConnectedStorage] User storage initialized at %S\n", m_storagePath.c_str());
+    LOG_INFO("[ConnectedStorage] User storage initialized at %S\n", m_storagePath.c_str());
 }

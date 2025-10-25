@@ -3,6 +3,11 @@
 
 HRESULT XboxUserLicenseInformationWrapperX::QueryInterface(const IID& riid, void** ppvObject)
 {
+	LPOLESTR str = nullptr;
+	StringFromIID(riid, &str);
+	wprintf(L"XboxUserLicenseInformationWrapperX: [QI] IID Requested: %s\n", str);
+	CoTaskMemFree(str);
+
 	if (riid == __uuidof(IXboxUserLicenseInformation))
 	{
 		*ppvObject = reinterpret_cast<ICurrentAppX*>(this);
@@ -53,6 +58,11 @@ HRESULT XboxUserLicenseInformationWrapperX::get_CurrentLicenseUserXuid(winrt::hs
 
 HRESULT LicenseInformationWrapperX::QueryInterface(const IID& riid, void** ppvObject)
 {
+	LPOLESTR str = nullptr;
+	StringFromIID(riid, &str);
+	wprintf(L"LicenseInformationWrapperX: [QI] IID Requested: %s\n", str);
+	CoTaskMemFree(str);
+
 	if (riid == __uuidof(ILicenseInformationX))
 	{
 		*ppvObject = reinterpret_cast<ICurrentAppX*>(this);
@@ -164,6 +174,11 @@ HRESULT LicenseInformationWrapperX::remove_LicenseChanged(EventRegistrationToken
 
 HRESULT __stdcall CurrentAppWrapperX::QueryInterface(REFIID riid, void** ppvObject)
 {
+	LPOLESTR str = nullptr;
+	StringFromIID(riid, &str);
+	wprintf(L"CurrentAppWrapperX [QI] IID Requested: %s\n", str);
+	CoTaskMemFree(str);
+
 	if (riid == __uuidof(ICurrentAppX))
 	{
 		*ppvObject = reinterpret_cast<ICurrentAppX*>(this);

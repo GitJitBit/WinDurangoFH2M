@@ -1,3 +1,21 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
 #include "d3d11_x.h"
 #include <cstdio>
 #include <mutex>
@@ -5,7 +23,7 @@
 #include <d3d11.h>
 #include "device_context_x.h"
 #include "device_x.h"
-#include "../common/debug.h"
+#include "../common/Logger.h"
 
 HRESULT CreateDevice(UINT Flags, wdi::ID3D11Device** ppDevice, wdi::ID3D11DeviceContext** ppImmediateContext)
 {
@@ -41,14 +59,13 @@ HRESULT CreateDevice(UINT Flags, wdi::ID3D11Device** ppDevice, wdi::ID3D11Device
     }
     else
     {
-        printf("failed to assign wrapped device, result code 0x%X, error code 0x%X\n", hr, GetLastError( ));
+        LOG_ERROR("failed to assign wrapped device, result code 0x%X, error code 0x%X\n", hr, GetLastError( ));
     }
 
     return hr;
 }
 HRESULT __stdcall D3DMapEsramMemory_X(UINT Flags, VOID* pVirtualAddress, UINT NumPages, const UINT* pPageList)
 {
-    DEBUGPRINT( );
     HANDLE hDevice = INVALID_HANDLE_VALUE;
     HRESULT result = 0;
     DWORD accessFlags = 0;
@@ -211,8 +228,7 @@ HRESULT __stdcall D3D11XCreateDeviceXAndSwapChain1_X(const D3D11X_CREATE_DEVICE_
         return E_INVALIDARG;
     }
 
-    printf("!!! Game is trying to initialize D3D11 through D3D11X !!!");
-    printf("SDK Version: %d\n", pParameters->Version);
+	LOG_INFO("!!! Game is trying to initialize D3D11 through D3D11X !!!\r\nSDK Version: %d\n", pParameters->Version);
     return D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, 0, pParameters->Flags & CREATE_DEVICE_FLAG_MASK, NULL, NULL, D3D11_SDK_VERSION, ppDevice, NULL, ppImmediateContext);
 }
 
@@ -282,7 +298,7 @@ HRESULT _stdcall DXGIXPresentArray_X(
     _In_ IDXGISwapChain1* const* ppSwapChain,
     _In_ const DXGIX_PRESENTARRAY_PARAMETERS* pPresentParameters)
 {
-    printf("[d3d11_x] !!! STUBBED: DXGIXPresentArray !!!");
+    LOG_WARNING("[d3d11_x] !!! STUBBED: DXGIXPresentArray !!!");
     return E_NOTIMPL;
 }
 
@@ -313,12 +329,11 @@ HRESULT __stdcall D3D11CreateDevice_X(
     _Out_opt_ D3D_FEATURE_LEVEL* pFeatureLevel,
     _Out_opt_ wdi::ID3D11DeviceContext** ppImmediateContext)
 {
-    printf("!!! Game is trying to initialize D3D11 through NORMAL D3D11 !!!\n");
-    printf("SDK Version: %d\n", SDKVersion);
+    LOG_INFO("!!! Game is trying to initialize D3D11 through NORMAL D3D11 !!!\r\nSDK Version: %d\n", SDKVersion);
 
     if (SDKVersion != D3D11_SDK_VERSION)
     {
-        printf("SDK Version mismatch: %d, correcting to %d\n", SDKVersion, D3D11_SDK_VERSION);
+        LOG_WARNING("SDK Version mismatch: %d, correcting to %d\n", SDKVersion, D3D11_SDK_VERSION);
         SDKVersion = D3D11_SDK_VERSION;
     }
 
@@ -354,7 +369,7 @@ HRESULT __stdcall D3D11CreateDevice_X(
     }
     else
     {
-        printf("failed to assign wrapped device, result code 0x%X, error code 0x%X\n", hr, GetLastError( ));
+        LOG_ERROR("failed to assign wrapped device, result code 0x%X, error code 0x%X\n", hr, GetLastError( ));
     }
 
     return hr;
@@ -365,8 +380,7 @@ HRESULT __stdcall D3D11XCreateDeviceX_X(
     _Out_opt_ wdi::ID3D11Device** ppDevice,
     _Out_opt_ wdi::ID3D11DeviceContext** ppImmediateContext)
 {
-    printf("!!! Game is trying to initialize D3D11 through D3D11X !!!");
-    printf("SDK Version: %d\n", pParameters->Version);
+    LOG_INFO("!!! Game is trying to initialize D3D11 through D3D11X !!!\r\nSDK Version: %d\n", pParameters->Version);
 
 	return CreateDevice(pParameters->Flags, ppDevice, ppImmediateContext);
 }
@@ -385,8 +399,7 @@ HRESULT __stdcall D3D11CreateDeviceAndSwapChain_X(
     _Out_opt_ D3D_FEATURE_LEVEL* pFeatureLevel,
     _Out_opt_ ID3D11DeviceContext** ppImmediateContext)
 {
-    printf("!!! Game is trying to initialize D3D11 through NORMAL D3D11 !!!");
-    printf("SDK Version: %d\n", SDKVersion);
+    LOG_INFO("!!! Game is trying to initialize D3D11 through NORMAL D3D11 !!!\r\nSDK Version: %d\n", SDKVersion);
     return D3D11CreateDeviceAndSwapChain(pAdapter, DriverType, Software, Flags, pFeatureLevels, FeatureLevels, SDKVersion, pSwapChainDesc, ppSwapChain, ppDevice, pFeatureLevel, ppImmediateContext);
 }
 
@@ -399,14 +412,14 @@ std::mutex g_NotifyMutex;
 void WD11XNotify_X(WDEVENT_TYPE event)
 {
     const std::lock_guard lock(g_NotifyMutex);
-	printf("[d3d11_x] received notification\n");
+    LOG_INFO("[d3d11_x] received notification\n");
 
     switch (event)
     {
 	case WDEVENT_TYPE_INVALID:
 		throw std::exception("this shouldn't happen, check code that sends events.");
 	case WDEVENT_TYPE_KEYBOARD_ENGAGE:
-		printf("[d3d11_x] keyboard engage\n");
+		LOG_INFO("[d3d11_x] keyboard engage\n");
 		wd::g_Overlay->EnableKeyboard( );
 		break;
     }
@@ -414,7 +427,7 @@ void WD11XNotify_X(WDEVENT_TYPE event)
 
 void WDWaitForKeyboard(const char** outText)
 {
-	printf("[d3d11_x] waiting for keyboard\n");
+    LOG_INFO("[d3d11_x] waiting for keyboard\n");
 
     WaitForSingleObject(wd::g_KeyboardFinished, INFINITE);
 

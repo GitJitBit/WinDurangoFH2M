@@ -1,10 +1,9 @@
 #pragma once
 #include "ICoreApplicationX.h"
 
-class CoreApplicationWrapperX : public RuntimeClass<IActivationFactory, ICoreApplicationResourceAvailabilityX, ICoreApplicationGpuPolicy, ICoreApplicationX>
+class CoreApplicationWrapperX : public RuntimeClass<IActivationFactory, ICoreApplicationResourceAvailabilityX, ICoreApplicationGpuPolicy, ICoreApplicationX, ICoreApplicationExit>
 {
 public:
-
 	CoreApplicationWrapperX(ComPtr<IActivationFactory> realFactory)
 		: m_realFactory(realFactory)
 	{
@@ -12,7 +11,14 @@ public:
 		if (FAILED(hr)) {
 			return;
 		}
+
+		hr = m_realFactory.As(&realExit);
+		if (FAILED(hr)) {
+			printf("[CoreApplicationWrapperX] Failed to get ICoreApplicationExit from factory: 0x%08X\n", hr);
+		}
 	}
+
+
 
 	// for IActivationFactory
 	HRESULT STDMETHODCALLTYPE ActivateInstance(__RPC__deref_out_opt IInspectable** instance) override
@@ -47,6 +53,18 @@ public:
 	HRESULT GetIids(ULONG* iidCount, IID** iids) override;
 	HRESULT GetRuntimeClassName(HSTRING* className) override;
 	HRESULT GetTrustLevel(TrustLevel* trustLevel) override;
+
+	// ICoreApplicationExit
+	ComPtr<ICoreApplicationExit> realExit;
+	HRESULT STDMETHODCALLTYPE Exit() override;
+	HRESULT STDMETHODCALLTYPE add_Exiting(
+		__FIEventHandler_1_IInspectable* handler,
+		EventRegistrationToken* token
+	) override;
+
+	HRESULT STDMETHODCALLTYPE remove_Exiting(
+		EventRegistrationToken token
+	) override;
 
 private:
 	long m_RefCount = 1;

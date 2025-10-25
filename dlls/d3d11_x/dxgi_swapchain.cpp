@@ -1,3 +1,21 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
 #include "dxgi_swapchain.h"
 
 #include "resource.hpp"
@@ -140,14 +158,37 @@ HRESULT wd::dxgi_swapchain::GetCoreWindow(const IID& refiid, void** ppUnk)
 }
 
 HRESULT wd::dxgi_swapchain::Present1(UINT SyncInterval, UINT PresentFlags,
-	const DXGI_PRESENT_PARAMETERS* pPresentParameters)
+									 const DXGI_PRESENT_PARAMETERS* pPresentParameters)
 {
+	if (wrapped_interface == nullptr)
+	{
+		return DXGI_ERROR_INVALID_CALL;
+	}
+
+	// Test if the interface is actually valid by checking its vtable
+	__try
+	{
+		// Try to call AddRef/Release to test validity
+		ULONG refCount = wrapped_interface->AddRef( );
+		wrapped_interface->Release( );
+
+		if (refCount == 0)
+		{
+			// Object is being destroyed
+			return DXGI_ERROR_INVALID_CALL;
+		}
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+		// The interface pointer is completely invalid
+		return DXGI_ERROR_INVALID_CALL;
+	}
+
 	if (wd::g_Overlay)
 		wd::g_Overlay->Present( );
 
 	return wrapped_interface->Present1(SyncInterval, PresentFlags, pPresentParameters);
 }
-
 BOOL wd::dxgi_swapchain::IsTemporaryMonoSupported()
 {
 	return wrapped_interface->IsTemporaryMonoSupported( );

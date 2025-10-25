@@ -104,7 +104,7 @@ namespace wd
 
         void GetDevice(ID3D11Device** ppDevice) override
         {
-			printf("WARN: render_target_view::GetDevice returns a PC device!!\n");
+			LOG_WARNING("WARN: render_target_view::GetDevice returns a PC device!!\n");
 			wrapped_interface->GetDevice(ppDevice);
         }
 
@@ -179,7 +179,7 @@ namespace wd
 
         void GetDevice(ID3D11Device** ppDevice) override
         {
-            printf("WARN: depth_stencil_view::GetDevice returns a PC device!!\n");
+            LOG_WARNING("WARN: depth_stencil_view::GetDevice returns a PC device!!\n");
             wrapped_interface->GetDevice(ppDevice);
         }
 
@@ -254,7 +254,7 @@ namespace wd
 
         void GetDevice(ID3D11Device** ppDevice) override
         {
-            printf("WARN: shader_resource_view::GetDevice returns a PC device!!\n");
+            LOG_WARNING("WARN: shader_resource_view::GetDevice returns a PC device!!\n");
             wrapped_interface->GetDevice(ppDevice);
         }
 
@@ -330,7 +330,7 @@ namespace wd
 
         void GetDevice(ID3D11Device** ppDevice) override
         {
-            printf("WARN: depth_stencil_view::GetDevice returns a PC device!!\n");
+            LOG_WARNING("WARN: depth_stencil_view::GetDevice returns a PC device!!\n");
             wrapped_interface->GetDevice(ppDevice);
         }
 

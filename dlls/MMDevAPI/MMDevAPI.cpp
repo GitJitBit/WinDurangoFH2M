@@ -1,3 +1,21 @@
+/*
+================================================================================
+DISCLAIMER AND LICENSE REQUIREMENT
+
+This code is provided with the condition that if you use, modify, or distribute
+this code in your project, you are required to make your project open source
+under a license compatible with the GNU General Public License (GPL) or a
+similarly strong copyleft license.
+
+By using this code, you agree to:
+1. Disclose your complete source code of any project incorporating this code.
+2. Include this disclaimer in any copies or substantial portions of this file.
+3. Provide clear attribution to the original author.
+
+If you do not agree to these terms, you do not have permission to use this code.
+
+================================================================================
+*/
 #include "pch.h"
 #include "framework.h"
 
@@ -47,6 +65,19 @@ MMDEVAPI_EXPORT_ORDINAL(DllUnregisterServer, 38)
 void DisableBitstreamOut_X( ) {}
 HRESULT EnableSpatialAudio_X( ) { return S_OK; }
 void RestoreBitstreamOut_X( ) {}
-DWORD_PTR SetWasapiThreadAffinityMask_X(DWORD_PTR dwThreadAffinityMask) { return 0; }
+
+DWORD_PTR __stdcall SetWasapiThreadAffinityMask_X(DWORD_PTR dwThreadAffinityMask)
+{
+    // Make sure the requested mask is valid for this process.
+    DWORD_PTR processMask = 0, systemMask = 0;
+    if (!GetProcessAffinityMask(GetCurrentProcess( ), &processMask, &systemMask))
+        return 0; // unexpected failure
+
+    if ((dwThreadAffinityMask & processMask) == 0)
+        dwThreadAffinityMask &= processMask;
+
+    // Apply and return the previous affinity mask (0 on failure).
+    return SetThreadAffinityMask(GetCurrentThread( ), dwThreadAffinityMask);
+}
 void RefreshWasapiDeviceList_X() {}
 

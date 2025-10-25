@@ -161,9 +161,6 @@
     <Filter Include="Implementation\Windows\Xbox\SmartGlass">
       <UniqueIdentifier>{a9003d68-6bbb-43e4-ab6e-f1243e316c7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{29acdefc-2846-4041-9c90-f6abc7716d3a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -1279,26 +1276,56 @@
     <ClCompile Include="Implementation\Windows.Xbox.SmartGlass.SmartGlassTextEntrySurface.cpp">
       <Filter>Implementation\Windows\Xbox\SmartGlass</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.Party.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChat.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChatMember.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyChatView.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyConfig.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\backends\imgui_impl_dx11.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyMember.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp">
-      <Filter>imgui</Filter>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyMemberDeviceGroup.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyRosterChangedEventArgs.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyStateChangedEventArgs.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.PartyView.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.UserPartyAssociation.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayer.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayerDeviceGroup.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GamePlayersChangedEventArgs.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.GameSessionReadyEventArgs.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.MatchStatusChangedEventArgs.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Windows.Xbox.Multiplayer.MultiplayerSessionReference.cpp">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2414,29 +2441,56 @@
     <ClInclude Include="Implementation\Windows.Xbox.SmartGlass.SmartGlassTextEntryEventArgs.h">
       <Filter>Implementation\Windows\Xbox\SmartGlass</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imconfig.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.Party.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChat.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChatMember.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\backends\imgui_impl_dx11.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyChatView.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\backends\imgui_impl_win32.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyConfig.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyMember.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyMemberDeviceGroup.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyRosterChangedEventArgs.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyStateChangedEventArgs.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.PartyView.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.UserPartyAssociation.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayer.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayerDeviceGroup.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GamePlayersChangedEventArgs.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.GameSessionReadyEventArgs.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.MatchStatusChangedEventArgs.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Implementation\Windows.Xbox.Multiplayer.MultiplayerSessionReference.h">
+      <Filter>Implementation\Windows\Xbox\Multiplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2444,9 +2498,6 @@
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
     <None Include=".editorconfig" />
-    <None Include="imgui\misc\debuggers\imgui.natstepfilter">
-      <Filter>imgui</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="External\Windows.Xbox.Input.idl">
@@ -2581,10 +2632,8 @@
     <Midl Include="External\Windows.Xbox.SmartGlass.idl">
       <Filter>External</Filter>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="imgui\misc\debuggers\imgui.natvis">
-      <Filter>imgui</Filter>
-    </Natvis>
+    <Midl Include="External\Windows.Xbox.Multiplayer.idl">
+      <Filter>External</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

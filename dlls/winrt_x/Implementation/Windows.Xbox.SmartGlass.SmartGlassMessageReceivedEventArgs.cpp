@@ -6,6 +6,6 @@ namespace winrt::Windows::Xbox::SmartGlass::implementation
 {
     hstring SmartGlassMessageReceivedEventArgs::Message()
     {
-        throw hresult_not_implemented();
+        LOG_NOT_IMPLEMENTED(); throw hresult_not_implemented();
     }
 }
